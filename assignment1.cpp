@@ -66,8 +66,7 @@ vector<Vertex> generate_points(vector<Vertex> control_points)
         vector<Vertex> midpoints;
         for (int j = 0; j < points.size() - 1; j++)
         {
-            Vertex m = Vertex(.5 * (points[j].get_x() + points[j + 1].get_x()), .5 * (points[j].get_y() + points[j + 1].get_y()));
-            // Vertex m = computeMidpoint(points[j], points[j + 1]);
+            Vertex m = computeMidpoint(points[j], points[j + 1]);
             midpoints.push_back(m);
         }
         points = midpoints;
@@ -106,18 +105,8 @@ void draw_curve(vector<Vertex> control_points, int n_iter)
         points = generate_points(points);
     }
 
-    glPointSize(5.0f);
-    glBegin(GL_POINTS);
-
-    for (int i = 0; i < points.size() - 1; i++)
-    {
-        glVertex2f(points[i].get_x(), points[i].get_y());
-        glVertex2f(points[i + 1].get_x(), points[i + 1].get_y());
-    }
-
-    glEnd();
-
     glLineWidth(15.0f);
+    glColor3ub(227, 178, 129);
     glBegin(GL_LINES);
 
     for (int i = 0; i < points.size() - 1; i++)
@@ -145,8 +134,6 @@ void display()
     top_left_outer_face.push_back(Vertex(-0.91, 0.5));
     top_left_outer_face.push_back(Vertex(-0.95, 0.35));
     top_left_outer_face.push_back(Vertex(-0.92, 0.2));
-    // top_left_outer_face.push_back(Vertex(-0.95, 0.08));
-    // top_left_outer_face.push_back(Vertex(-0.96, 0));
 
     vector<Vertex> top_left_inner_face;
 
