@@ -1,15 +1,20 @@
 /***
  Assignment-2: Rotating a Cube in 3-Dimensional Space
 
- Name: Wong, Alex (Please write your name in Last Name, First Name format)
+ Name: Raymundo, Nicolas
 
- Collaborators: Doe, John; Doe, Jane
+ Collaborators: Swaminarayan, Jigar
  ** Note: although the assignment should be completed individually
  you may speak with classmates on high level algorithmic concepts. Please
  list their names in this section
 
  Project Summary: A short paragraph (3-4 sentences) describing the work you
  did for the project.
+ 
+ Using rotation matrices and matrix multiplication, I was able to mutate a 
+ cube to be able to rotate about given axes. Converting to homogeneous/cartesian 
+ coordinates required adding or removing a 1.0 
+
  ***/
 
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
@@ -50,7 +55,7 @@ vector<GLfloat> to_homogenous_coord(vector<GLfloat> cartesian_coords) {
   vector<GLfloat> result = cartesian_coords;
 
   for (int i = 3; i <= result.size(); i += 4) {
-    result.insert(result.begin() + i, 1);
+    result.insert(result.begin() + i, 1.0);
   }
 
   return result;
@@ -231,7 +236,8 @@ void display_func() {
         0.0,    1.0,    1.0,
     };
 
-    points = to_cartesian_coord(mat_mult(to_homogenous_coord(points), rotation_matrix_x(theta)));
+    points = to_cartesian_coord(mat_mult(rotation_matrix_x(theta), to_homogenous_coord(points)));
+    // points = to_cartesian_coord(mat_mult(to_homogenous_coord(points), rotation_matrix_x(theta)));
     // points = to_cartesian_coord(mat_mult(to_homogenous_coord(points), rotation_matrix_y(theta)));
     // points = to_cartesian_coord(mat_mult(to_homogenous_coord(points), rotation_matrix_z(theta)));
 
