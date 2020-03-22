@@ -4,17 +4,13 @@
  Name: Raymundo, Nicolas
 
  Collaborators: Swaminarayan, Jigar
- ** Note: although the assignment should be completed individually
- you may speak with classmates on high level algorithmic concepts. Please
- list their names in this section
 
- Project Summary: A short paragraph (3-4 sentences) describing the work you
- did for the project.
- 
+ Project Summary: 
  Using rotation matrices and matrix multiplication, I was able to mutate a 
  cube to be able to rotate about given axes. Converting to homogeneous/cartesian 
- coordinates required adding or removing a 1.0 
-
+ coordinates required adding or removing a 1.0 at every 4th element. Matrix
+ multiplication was a little tough to wrap my head around but help from
+ Professor Wong helped me figure it out.
  ***/
 
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
@@ -53,86 +49,73 @@ GLfloat* vector2array(vector<GLfloat> vec) {
 // Converts Cartesian coordinates to homogeneous coordinates
 vector<GLfloat> to_homogenous_coord(vector<GLfloat> cartesian_coords) {
   vector<GLfloat> result = cartesian_coords;
-
   for (int i = 3; i <= result.size(); i += 4) {
     result.insert(result.begin() + i, 1.0);
   }
-
   return result;
 }
 
 // Converts homogeneous coordinates to Cartesian coordinates
 vector<GLfloat> to_cartesian_coord(vector<GLfloat> homogenous_coords) {
   vector<GLfloat> result = homogenous_coords;
-
   for (int i = 3; i <= result.size(); i += 3) {
     result.erase(result.begin() + i);
   }
-
   return result;
 } 
 
 // Definition of a rotation matrix about the x-axis theta degrees
 vector<GLfloat> rotation_matrix_x(float theta) {
   vector<GLfloat> rotate_mat_x;
-
   rotate_mat_x = { 
     1.0, 0.0, 0.0, 0.0, 
     0.0, +cos(deg2rad(theta)), -sin(deg2rad(theta)), 0.0, 
     0.0, +sin(deg2rad(theta)), +cos(deg2rad(theta)), 0.0, 
     0.0, 0.0, 0.0, 1.0 
   };
-
   return rotate_mat_x;
 }
 
 // Definition of a rotation matrix along the y-axis by theta degrees
 vector<GLfloat> rotation_matrix_y(float theta) {
   vector<GLfloat> rotate_mat_y;
-
   rotate_mat_y = { 
-    +cos(deg2rad(theta)), 0.0, -sin(deg2rad(theta)), 0.0, 
+    +cos(deg2rad(theta)), 0.0, +sin(deg2rad(theta)), 0.0, 
     0.0, 1.0, 0.0, 0.0, 
-    +sin(deg2rad(theta)), 0.0, +cos(deg2rad(theta)), 0.0, 
+    -sin(deg2rad(theta)), 0.0, +cos(deg2rad(theta)), 0.0, 
     0.0, 0.0, 0.0, 1.0 
   };
-
   return rotate_mat_y;
 }
 
 // Definition of a rotation matrix along the z-axis by theta degrees
 vector<GLfloat> rotation_matrix_z(float theta) {
   vector<GLfloat> rotate_mat_z;
-
   rotate_mat_z = { 
     +cos(deg2rad(theta)), -sin(deg2rad(theta)), 0.0, 0.0, 
     +sin(deg2rad(theta)), +cos(deg2rad(theta)), 0.0, 0.0, 
     0.0, 0.0, 1.0, 0.0, 
     0.0, 0.0, 0.0, 1.0 
   };
-
   return rotate_mat_z;
 }
 
 // Perform matrix multiplication for A B
 vector<GLfloat> mat_mult(vector<GLfloat> A, vector<GLfloat> B) {
   vector<GLfloat> result;
-  GLfloat number;
-
   // loop through A
-  for (int i = 0; i < A.size(); i += 4) {
+  for (int i = 0; i < B.size(); i += 4) {
     // loop through B
-    for (int j = 0; j < B.size(); j += 4) {
-      number = 0;
+    for (int j = 0; j < A.size(); j += 4) {
+      GLfloat number = 0;
       // loop through every element
       for (int l = 0; l < 4; l++) {
         // add l to i and j to get each element in the row
-        number += (A[i + l] * B[j + l]);
+        number += (A[j + l] * B[i + l]);
       }
       result.push_back(number);
     }
   }
-
   return result;
 }
 
@@ -237,9 +220,8 @@ void display_func() {
     };
 
     points = to_cartesian_coord(mat_mult(rotation_matrix_x(theta), to_homogenous_coord(points)));
-    // points = to_cartesian_coord(mat_mult(to_homogenous_coord(points), rotation_matrix_x(theta)));
-    // points = to_cartesian_coord(mat_mult(to_homogenous_coord(points), rotation_matrix_y(theta)));
-    // points = to_cartesian_coord(mat_mult(to_homogenous_coord(points), rotation_matrix_z(theta)));
+    points = to_cartesian_coord(mat_mult(rotation_matrix_y(theta), to_homogenous_coord(points)));
+    points = to_cartesian_coord(mat_mult(rotation_matrix_z(theta), to_homogenous_coord(points)));
 
     GLfloat* vertices = vector2array(points);
 
