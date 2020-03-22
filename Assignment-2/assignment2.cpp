@@ -47,26 +47,22 @@ GLfloat* vector2array(vector<GLfloat> vec) {
 
 // Converts Cartesian coordinates to homogeneous coordinates
 vector<GLfloat> to_homogenous_coord(vector<GLfloat> cartesian_coords) {
-  vector<GLfloat> result;
+  vector<GLfloat> result = cartesian_coords;
 
-  for (int i = 3; i < cartesian_coords.size() - 1; i += 5) {
-    cartesian_coords.insert(cartesian_coords.begin() + i, 1);
+  for (int i = 3; i <= result.size(); i += 4) {
+    result.insert(result.begin() + i, 1);
   }
-
-  // TODO: Append the 1 in the 4th dimension to generate homoegenous coordinates
 
   return result;
 }
 
-// Converts Cartesian coordinates to homogeneous coordinates
+// Converts homogeneous coordinates to Cartesian coordinates
 vector<GLfloat> to_cartesian_coord(vector<GLfloat> homogenous_coords) {
-  vector<GLfloat> result;
+  vector<GLfloat> result = homogenous_coords;
 
-  for (int i = 4; i < homogenous_coords.size() - 1; i += 4) {
-    homogenous_coords.erase(homogenous_coords.begin() + i);
+  for (int i = 3; i <= result.size(); i += 3) {
+    result.erase(result.begin() + i);
   }
-
-  // TODO: Remove the 1 in the 4th dimension to generate Cartesian coordinates
 
   return result;
 } 
@@ -75,14 +71,12 @@ vector<GLfloat> to_cartesian_coord(vector<GLfloat> homogenous_coords) {
 vector<GLfloat> rotation_matrix_x(float theta) {
   vector<GLfloat> rotate_mat_x;
 
-  rotate_mat_x = {
-      1.0, 0.0, 0.0, 0.0,
-      0.0, +cos(deg2rad(theta)), -sin(deg2rad(theta)), 0.0,
-      0.0, +sin(deg2rad(theta)), +cos(deg2rad(theta)), 0.0,
-      0.0, 0.0, 0.0, 1.0
+  rotate_mat_x = { 
+    1.0, 0.0, 0.0, 0.0, 
+    0.0, +cos(deg2rad(theta)), -sin(deg2rad(theta)), 0.0, 
+    0.0, +sin(deg2rad(theta)), +cos(deg2rad(theta)), 0.0, 
+    0.0, 0.0, 0.0, 1.0 
   };
-
-  // TODO: Define the rotation matrix about the x-axis
 
   return rotate_mat_x;
 }
@@ -91,14 +85,12 @@ vector<GLfloat> rotation_matrix_x(float theta) {
 vector<GLfloat> rotation_matrix_y(float theta) {
   vector<GLfloat> rotate_mat_y;
 
-  rotate_mat_y = {
-      +cos(deg2rad(theta)), 0.0, -sin(deg2rad(theta)), 0.0,
-      0.0, 1.0, 0.0, 0.0,
-      +sin(deg2rad(theta)), 0.0, +cos(deg2rad(theta)), 0.0,
-      0.0, 0.0, 0.0, 1.0
+  rotate_mat_y = { 
+    +cos(deg2rad(theta)), 0.0, -sin(deg2rad(theta)), 0.0, 
+    0.0, 1.0, 0.0, 0.0, 
+    +sin(deg2rad(theta)), 0.0, +cos(deg2rad(theta)), 0.0, 
+    0.0, 0.0, 0.0, 1.0 
   };
-
-  // TODO: Define the rotation matrix about the y-axis
 
   return rotate_mat_y;
 }
@@ -107,14 +99,12 @@ vector<GLfloat> rotation_matrix_y(float theta) {
 vector<GLfloat> rotation_matrix_z(float theta) {
   vector<GLfloat> rotate_mat_z;
 
-  rotate_mat_z = {
-      +cos(deg2rad(theta)), -sin(deg2rad(theta)), 0.0, 0.0,
-      +sin(deg2rad(theta)), +cos(deg2rad(theta)), 0.0, 0.0,
-      0.0, 0.0, 1.0, 0.0,
-      0.0, 0.0, 0.0, 1.0
+  rotate_mat_z = { 
+    +cos(deg2rad(theta)), -sin(deg2rad(theta)), 0.0, 0.0, 
+    +sin(deg2rad(theta)), +cos(deg2rad(theta)), 0.0, 0.0, 
+    0.0, 0.0, 1.0, 0.0, 
+    0.0, 0.0, 0.0, 1.0 
   };
-
-  // TODO: Define the rotation matrix about the z-axis
 
   return rotate_mat_z;
 }
@@ -122,8 +112,21 @@ vector<GLfloat> rotation_matrix_z(float theta) {
 // Perform matrix multiplication for A B
 vector<GLfloat> mat_mult(vector<GLfloat> A, vector<GLfloat> B) {
   vector<GLfloat> result;
+  GLfloat number;
 
-  // TODO: Compute matrix multiplication of A B
+  // loop through A
+  for (int i = 0; i < A.size(); i += 4) {
+    // loop through B
+    for (int j = 0; j < B.size(); j += 4) {
+      number = 0;
+      // loop through every element
+      for (int l = 0; l < 4; l++) {
+        // add l to i and j to get each element in the row
+        number += (A[i + l] * B[j + l]);
+      }
+      result.push_back(number);
+    }
+  }
 
   return result;
 }
@@ -228,8 +231,9 @@ void display_func() {
         0.0,    1.0,    1.0,
     };
 
-    // TODO: Apply rotation(s) to the set of points
-
+    points = to_cartesian_coord(mat_mult(to_homogenous_coord(points), rotation_matrix_x(theta)));
+    // points = to_cartesian_coord(mat_mult(to_homogenous_coord(points), rotation_matrix_y(theta)));
+    // points = to_cartesian_coord(mat_mult(to_homogenous_coord(points), rotation_matrix_z(theta)));
 
     GLfloat* vertices = vector2array(points);
 
