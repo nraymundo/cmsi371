@@ -77,8 +77,8 @@ vector<GLfloat> rotation_matrix_x(float theta) {
 
   rotate_mat_x = {
       1.0, 0.0, 0.0, 0.0,
-      0.0, +cos(theta), -sin(theta), 0.0,
-      0.0, +sin(theta), +cos(theta), 0.0,
+      0.0, +cos(deg2rad(theta)), -sin(deg2rad(theta)), 0.0,
+      0.0, +sin(deg2rad(theta)), +cos(deg2rad(theta)), 0.0,
       0.0, 0.0, 0.0, 1.0
   };
 
@@ -92,9 +92,9 @@ vector<GLfloat> rotation_matrix_y(float theta) {
   vector<GLfloat> rotate_mat_y;
 
   rotate_mat_y = {
-      +cos(theta), 0.0, -sin(theta), 0.0,
+      +cos(deg2rad(theta)), 0.0, -sin(deg2rad(theta)), 0.0,
       0.0, 1.0, 0.0, 0.0,
-      +sin(theta), 0.0, +cos(theta), 0.0,
+      +sin(deg2rad(theta)), 0.0, +cos(deg2rad(theta)), 0.0,
       0.0, 0.0, 0.0, 1.0
   };
 
@@ -108,8 +108,8 @@ vector<GLfloat> rotation_matrix_z(float theta) {
   vector<GLfloat> rotate_mat_z;
 
   rotate_mat_z = {
-      +cos(theta), -sin(theta), 0.0, 0.0,
-      +sin(theta), +cos(theta), 0.0, 0.0,
+      +cos(deg2rad(theta)), -sin(deg2rad(theta)), 0.0, 0.0,
+      +sin(deg2rad(theta)), +cos(deg2rad(theta)), 0.0, 0.0,
       0.0, 0.0, 1.0, 0.0,
       0.0, 0.0, 0.0, 1.0
   };
