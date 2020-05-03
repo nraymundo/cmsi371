@@ -176,15 +176,27 @@ vector<GLfloat> mat_mult(vector<GLfloat> A, vector<GLfloat> B) {
 // Builds a unit cube centered at the origin
 vector<GLfloat> build_cube() {
   vector<GLfloat> result;
-  
-  vector<GLfloat> front_face = mat_mult(translation_matrix(0, 0, 0.5), to_homogeneous_coord(init_plane()));
-  vector<GLfloat> back_face = mat_mult(mat_mult(translation_matrix(0, 0, -0.5), rotation_matrix_y(180)), to_homogeneous_coord(init_plane()));
-  vector<GLfloat> right_face = mat_mult(mat_mult(translation_matrix(0.5, 0, 0), rotation_matrix_y(90)), to_homogeneous_coord(init_plane()));
-  vector<GLfloat> left_face = mat_mult(mat_mult(translation_matrix(-0.5, 0, 0), rotation_matrix_y(-90)), to_homogeneous_coord(init_plane()));
-  vector<GLfloat> top_face = mat_mult(mat_mult(translation_matrix(0, 0.5, 0), rotation_matrix_x(-90)), to_homogeneous_coord(init_plane()));
-  vector<GLfloat> bottom_face = mat_mult(mat_mult(translation_matrix(0, -0.5, 0), rotation_matrix_x(90)), to_homogeneous_coord(init_plane()));
-  
-  result.reserve(front_face.size() + back_face.size() + right_face.size() + left_face.size() + top_face.size() + bottom_face.size());
+
+  vector<GLfloat> front_face = mat_mult(translation_matrix(0, 0, 0.5),
+                                        to_homogeneous_coord(init_plane()));
+  vector<GLfloat> back_face = mat_mult(
+      translation_matrix(0, 0, -0.5),
+      mat_mult(rotation_matrix_y(180), to_homogeneous_coord(init_plane())));
+  vector<GLfloat> right_face = mat_mult(
+      translation_matrix(0.5, 0, 0),
+      mat_mult(rotation_matrix_y(90), to_homogeneous_coord(init_plane())));
+  vector<GLfloat> left_face = mat_mult(
+      translation_matrix(-0.5, 0, 0),
+      mat_mult(rotation_matrix_y(-90), to_homogeneous_coord(init_plane())));
+  vector<GLfloat> top_face = mat_mult(
+      translation_matrix(0, 0.5, 0),
+      mat_mult(rotation_matrix_x(-90), to_homogeneous_coord(init_plane())));
+  vector<GLfloat> bottom_face = mat_mult(
+      translation_matrix(0, -0.5, 0),
+      mat_mult(rotation_matrix_x(90), to_homogeneous_coord(init_plane())));
+
+  result.reserve(front_face.size() + back_face.size() + right_face.size() +
+                 left_face.size() + top_face.size() + bottom_face.size());
   result.insert(result.end(), front_face.begin(), front_face.end());
   result.insert(result.end(), back_face.begin(), back_face.end());
   result.insert(result.end(), right_face.begin(), right_face.end());
@@ -226,14 +238,123 @@ void init_camera() {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
 
-  // TODO: Setup your camera here
+  // Define a 50 degree field of view, 1:1 aspect ratio, near and far planes at
+  // 3 and 7
+  gluPerspective(90.0, 1.0, 2.0, 15.0);
+  // Position camera at (2, 3, 5), attention at (0, 0, 0), up at (0, 1, 0)
+  gluLookAt(2.0, 6.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 }
 
 // Construct the scene using objects built from cubes/prisms
 vector<GLfloat> init_scene() {
-  vector<GLfloat> scene = build_cube();
+  vector<GLfloat> scene;
 
-  // TODO: Build your scene here
+  // Table
+  vector<GLfloat> leg_1 =
+      mat_mult(translation_matrix(0.75, 0.4, 0.5),
+               mat_mult(scaling_matrix(0.15, 0.85, 0.15), build_cube()));
+  vector<GLfloat> leg_2 =
+      mat_mult(translation_matrix(-0.75, 0.4, 0.5),
+               mat_mult(scaling_matrix(0.15, 0.85, 0.15), build_cube()));
+  vector<GLfloat> leg_3 =
+      mat_mult(translation_matrix(0.75, 0.4, -1),
+               mat_mult(scaling_matrix(0.15, 0.85, 0.15), build_cube()));
+  vector<GLfloat> leg_4 =
+      mat_mult(translation_matrix(-0.75, 0.4, -1),
+               mat_mult(scaling_matrix(0.15, 0.85, 0.15), build_cube()));
+  vector<GLfloat> table_top =
+      mat_mult(translation_matrix(0, 0.9, -0.25),
+               mat_mult(scaling_matrix(2, 0.15, 2), build_cube()));
+
+  // Couch
+  vector<GLfloat> right_cushion_base =
+      mat_mult(translation_matrix(-2.9, 0.4, 0),
+               mat_mult(scaling_matrix(0.5, 0.85, 4), build_cube()));
+  vector<GLfloat> right_cushion_arm_rest =
+      mat_mult(translation_matrix(-3, 0.5, -2.1),
+               mat_mult(scaling_matrix(0.75, 1.1, 0.25), build_cube()));
+  vector<GLfloat> right_cushion_back =
+      mat_mult(translation_matrix(-3.25, 0.6, 0),
+               mat_mult(scaling_matrix(0.25, 1.8, 4), build_cube()));
+  vector<GLfloat> left_cushion_base =
+      mat_mult(translation_matrix(-2.2, 0.4, 2.5),
+               mat_mult(scaling_matrix(2, 0.85, 1), build_cube()));
+  vector<GLfloat> left_cushion_arm_rest =
+      mat_mult(translation_matrix(-3, 0.5, 3.1),
+               mat_mult(scaling_matrix(0.75, 1.1, 0.25), build_cube()));
+  vector<GLfloat> left_cushion_back =
+      mat_mult(translation_matrix(-3.25, 0.6, 2.5),
+               mat_mult(scaling_matrix(0.25, 1.8, 1), build_cube()));
+
+  // Chair
+  vector<GLfloat> chair_base_back =
+      mat_mult(translation_matrix(2.9, 0, -1.6),
+               mat_mult(scaling_matrix(0.1, 0.1, 1), build_cube()));
+  vector<GLfloat> chair_base_left =
+      mat_mult(translation_matrix(2.4, 0, -1.15),
+               mat_mult(scaling_matrix(0.9, 0.1, 0.1), build_cube()));
+  vector<GLfloat> chair_base_right =
+      mat_mult(translation_matrix(2.4, 0, -2.05),
+               mat_mult(scaling_matrix(0.9, 0.1, 0.1), build_cube()));
+  vector<GLfloat> chair_base_left_front =
+      mat_mult(translation_matrix(2, 0.55, -2.05),
+               mat_mult(scaling_matrix(0.1, 1, 0.1), build_cube()));
+  vector<GLfloat> chair_base_right_front =
+      mat_mult(translation_matrix(2, 0.55, -1.15),
+               mat_mult(scaling_matrix(0.1, 1, 0.1), build_cube()));
+  vector<GLfloat> chair_cushion =
+      mat_mult(translation_matrix(2.4, 1.1, -1.6),
+               mat_mult(scaling_matrix(0.9, 0.1, 1), build_cube()));
+  vector<GLfloat> chair_back =
+      mat_mult(translation_matrix(2.8, 1.4, -1.6),
+               mat_mult(scaling_matrix(0.1, 0.5, 1), build_cube()));
+
+  // Rug
+  vector<GLfloat> rug =
+      mat_mult(translation_matrix(0, -0.05, -0.25),
+               mat_mult(scaling_matrix(4, 0.05, 5.5), build_cube()));
+
+  scene.reserve(leg_1.size() + leg_2.size() + leg_3.size() + leg_4.size() +
+                table_top.size() + right_cushion_base.size() +
+                right_cushion_arm_rest.size() + right_cushion_back.size() +
+                left_cushion_base.size() + left_cushion_arm_rest.size() +
+                left_cushion_back.size() + chair_base_back.size() +
+                chair_base_left.size() + chair_base_right.size() +
+                chair_base_left_front.size() + chair_base_right_front.size() +
+                chair_cushion.size() + chair_back.size() + rug.size());
+
+  // Table
+  scene.insert(scene.end(), leg_1.begin(), leg_1.end());
+  scene.insert(scene.end(), leg_2.begin(), leg_2.end());
+  scene.insert(scene.end(), leg_3.begin(), leg_3.end());
+  scene.insert(scene.end(), leg_4.begin(), leg_4.end());
+  scene.insert(scene.end(), table_top.begin(), table_top.end());
+
+  // Couch
+  scene.insert(scene.end(), right_cushion_base.begin(),
+               right_cushion_base.end());
+  scene.insert(scene.end(), right_cushion_arm_rest.begin(),
+               right_cushion_arm_rest.end());
+  scene.insert(scene.end(), right_cushion_back.begin(),
+               right_cushion_back.end());
+  scene.insert(scene.end(), left_cushion_base.begin(), left_cushion_base.end());
+  scene.insert(scene.end(), left_cushion_arm_rest.begin(),
+               left_cushion_arm_rest.end());
+  scene.insert(scene.end(), left_cushion_back.begin(), left_cushion_back.end());
+
+  // Chair
+  scene.insert(scene.end(), chair_base_back.begin(), chair_base_back.end());
+  scene.insert(scene.end(), chair_base_left.begin(), chair_base_left.end());
+  scene.insert(scene.end(), chair_base_right.begin(), chair_base_right.end());
+  scene.insert(scene.end(), chair_base_left_front.begin(),
+               chair_base_left_front.end());
+  scene.insert(scene.end(), chair_base_right_front.begin(),
+               chair_base_right_front.end());
+  scene.insert(scene.end(), chair_cushion.begin(), chair_cushion.end());
+  scene.insert(scene.end(), chair_back.begin(), chair_back.end());
+
+  // Rug
+  scene.insert(scene.end(), rug.begin(), rug.end());
 
   return scene;
 }
@@ -250,7 +371,6 @@ vector<GLfloat> init_color(vector<GLfloat> scene) {
 void display_func() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  // TODO: Rotate the scene using the scene vector
   vector<GLfloat> scene = SCENE;
   scene = mat_mult(rotation_matrix_y(THETA), scene);
   scene = to_cartesian_coord(scene);
@@ -274,6 +394,9 @@ void display_func() {
 
   glFlush();  // Finish rendering
   glutSwapBuffers();
+
+  delete [] scene_vertices;
+  delete [] color_vertices;
 }
 
 void idle_func() {
